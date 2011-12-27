@@ -218,27 +218,25 @@ class BaseFilterSet(object):
 
     @property
     def qs(self):
-        if not hasattr(self, '_qs'):
-            qs = self.queryset.all()
-            for name, filter_ in self.filters.iteritems():
-                try:
-                    if self.is_bound:
-                        data = self.form[name].data
-                    else:
-                        data = self.form.initial.get(name, self.form[name].field.initial)
-                    val = self.form.fields[name].clean(data)
-                    qs = filter_.filter(qs, val)
-                except forms.ValidationError:
-                    pass
-            if self._meta.order_by:
-                try:
-                    value = self.form.fields[ORDER_BY_FIELD].clean(self.form[ORDER_BY_FIELD].data)
-                    if value:
-                        qs = qs.order_by(value)
-                except forms.ValidationError:
-                    pass
-            self._qs = qs
-        return self._qs
+        qs = self.queryset.all()
+        for name, filter_ in self.filters.iteritems():
+            try:
+                if self.is_bound:
+                    data = self.form[name].data
+                else:
+                    data = self.form.initial.get(name, self.form[name].field.initial)
+                val = self.form.fields[name].clean(data)
+                qs = filter_.filter(qs, val)
+            except forms.ValidationError:
+                pass
+        if self._meta.order_by:
+            try:
+                value = self.form.fields[ORDER_BY_FIELD].clean(self.form[ORDER_BY_FIELD].data)
+                if value:
+                    qs = qs.order_by(value)
+            except forms.ValidationError:
+                pass
+        return qs
 
     @property
     def form(self):

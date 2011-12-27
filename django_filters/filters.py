@@ -88,8 +88,8 @@ class MultipleChoiceFilter(Filter):
         value = value or ()
         # TODO: this is a bit of a hack, but ModelChoiceIterator doesn't have a
         # __len__ method
-        if len(value) == len(list(self.field.choices)):
-            return qs
+#        if len(value) == len(list(self.field.choices)):
+#            return qs
         q = Q()
         for v in value:
             q |= Q(**{self.name: v})
